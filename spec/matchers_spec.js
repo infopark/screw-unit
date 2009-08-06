@@ -362,11 +362,30 @@ Screw.Unit(function() {
           var message = null;
           try { expect(2).to(be_lte, 1) } catch(e) { message = e }
           expect(message).to(equal, 'expected 2 to be less than or equal to 1');
-          
+
           try { expect(1).to_not(be_lte, 2) } catch(e) { message = e }
           expect(message).to(equal, 'expected 1 to not be less than or equal to 2');
         });
       });
     });
+
+    describe('#throw_exception', function() {
+      it('should match functions that throw exceptions', function() {
+        expect(function() { throw "foo" }).to(throw_exception);
+        expect(function() { }).to_not(throw_exception);
+      });
+
+      describe(".failure_message", function() {
+        it('prints "expected function to throw an exception"', function() {
+          var message = null;
+          try { expect(function() { var dummy = "dummy"; } ).to(throw_exception) } catch(e) { message = e }
+          expect(message).to(equal, 'expected \n    var dummy = \"dummy\";\n to throw an exception');
+
+          try { expect(function() { throw "foo" }).to_not(throw_exception) } catch(e) { message = e }
+          expect(message).to(equal, 'expected \n    throw \"foo\";\n not to throw an exception');
+        });
+      });
+    });
+
   });
 });
