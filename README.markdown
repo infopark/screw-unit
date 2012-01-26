@@ -216,6 +216,42 @@ Behavioral testing, that is, asserting that certain functions are called rather 
       expect(decrement_luck_was_called).to(equal, true);
     });
 
+## Asynchronous Testing
+
+Asynchronous testing is done by specifying one or more `waitFor`/`run` functions inside an `it`.
+
+    it("tests an asynchronous function", function() {
+      function asyncSum(lhs, rhs, result) {
+        window.setTimeout(function() {
+          result.sum = lhs + rhs;
+        }, 250);
+      }
+
+      var result = {};
+
+      run(function() {
+        asyncSum(2, 3, result);
+      });
+
+      waitFor({
+        description: "waiting for asyncSum to give a result timed out.",
+        run: function() {
+          return result.sum !== undefined;
+        },
+        timeout: 1500
+      });
+
+      /* An alternative short-hand waitFor function with default description and timeout (of 5000ms) would be to use:
+      waitFor(function() {
+        return result.sum !== undefined;
+      });
+      */
+
+      run(function() {
+        assertThat(result.sum, 5);
+      });
+    });
+
 # How to Test the DOM
 
 The simplest way to test the DOM is to have a special DOM node in your `suite.html` file. Have all tests insert nodes into this node; have a global `before` reset the node between tests.
